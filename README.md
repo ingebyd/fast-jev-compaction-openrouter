@@ -1,4 +1,39 @@
-# fast-jev-compaction
+# fast-jev-compaction (OpenRouter, zero data retention)
+
+> Fork of [tamaratran/fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction).
+> The compaction logic is unchanged; only the transport to Jev is different.
+
+## Differences from the original, and why
+
+| | Original | This fork |
+| --- | --- | --- |
+| Endpoint | `https://api.typesafe.ai/v1/systemone` | `https://openrouter.ai/api/alpha/decisions` |
+| Default model | `jev-latest` | `~typesafe/jev-latest` (OpenRouter alias, currently `typesafe/jev-1.13`) |
+| API key | `TYPESAFE_API_KEY` | `OPENROUTER_API_KEY` (or the plugin's `apiKey` option) |
+| Provider routing | none | `"provider": { "zdr": true, "data_collection": "deny" }` on every request |
+| Request overhead estimate | 20 tokens | 40 tokens |
+
+**Why.** The state sent to Jev is the whole conversation: user prompts,
+assistant text and every tool input (file paths, commands, diffs). The
+TypeSafe API collects request data by default, so every compaction would ship
+the session to a provider that may keep it. OpenRouter exposes the same Jev
+model through its Decisions endpoint with the same `state` / `questions` /
+`answers` format, and lets the request itself demand zero data retention.
+
+- **`zdr: true`** routes only to endpoints that do not retain prompts.
+- **`data_collection: "deny"`** excludes providers that store or train on
+  request data.
+- **The provider block is a constant, not an option.** It cannot be switched
+  off from plugin settings or library options, so a misconfiguration cannot
+  silently weaken it. If no compliant endpoint is available, OpenRouter returns
+  an error, compaction throws, and the Claude Code hook falls back to the
+  built-in summary: the transcript never reaches a non-ZDR endpoint.
+- **The `~` model alias** follows the newest Jev release without a config
+  change, like `jev-latest` did on TypeSafe.
+- **The overhead estimate** grew by the size of the provider block, so request
+  batching still stays under Jev's 32k request limit.
+
+---
 
 Claude Code plugin that replaces the compaction summary with Jev decisions:
 every tool call and result is scored in one fast request, stale ones are
