@@ -344,7 +344,7 @@ describe('compact', () => {
     const output = await compact(
       messages,
       fakeJev((name) => (name.startsWith('call_') ? 0.9 : 0.1), seen),
-      { preserveRecentMessages: 1, maxRequestTokens: stateTokens + 150 },
+      { preserveRecentMessages: 1, maxRequestTokens: stateTokens + 170 },
     );
 
     expect(output.stats.requests).toBe(seen.length);
@@ -390,14 +390,15 @@ describe('compact', () => {
 });
 
 describe('HTTP client', () => {
-  it('builds a System One request', () => {
+  it('builds an OpenRouter Decisions request with zero data retention', () => {
     const request = buildJevRequest({ apiKey: 'k' }, { a: 1 }, {
       q: { type: 'noul', instructions: 'x' },
     });
-    expect(request.url).toBe('https://api.typesafe.ai/v1/systemone');
+    expect(request.url).toBe('https://openrouter.ai/api/alpha/decisions');
     expect(request.headers.authorization).toBe('Bearer k');
     expect(JSON.parse(request.body)).toEqual({
-      model: 'jev-latest',
+      model: '~typesafe/jev-latest',
+      provider: { zdr: true, data_collection: 'deny' },
       state: { a: 1 },
       questions: { q: { type: 'noul', instructions: 'x' } },
     });
@@ -423,11 +424,12 @@ describe('HTTP client', () => {
     const response = await client.ask('state', { q: { type: 'noul', instructions: 'x' } });
     expect(response.answers.q).toEqual({ noul: 0.4 });
     expect(JSON.parse(bodies[0]!).model).toBe('jev-test');
+    expect(JSON.parse(bodies[0]!).provider).toEqual({ zdr: true, data_collection: 'deny' });
 
     const keyless = new JevClient({ apiKey: '' });
-    await expect(keyless.ask('s', {})).rejects.toThrow(/TYPESAFE_API_KEY/);
+    await expect(keyless.ask('s', {})).rejects.toThrow(/OPENROUTER_API_KEY/);
     await expect(
       compactMessages(transcript(), { apiKey: '', preserveRecentMessages: 1 }),
-    ).rejects.toThrow(/TYPESAFE_API_KEY/);
+    ).rejects.toThrow(/OPENROUTER_API_KEY/);
   });
 });

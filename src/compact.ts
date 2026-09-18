@@ -23,8 +23,8 @@ export const DEFAULT_OPTIONS: ResolvedCompactOptions = {
   truncateHeadChars: 300,
 };
 
-/** Tokens the request envelope (`model`, key names) adds around state and questions. */
-const REQUEST_OVERHEAD_TOKENS = 20;
+/** Tokens the request envelope (`model`, `provider`, key names) adds around state and questions. */
+const REQUEST_OVERHEAD_TOKENS = 40;
 
 function finite(value: number | undefined, fallback: number): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback;

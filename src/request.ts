@@ -1,7 +1,14 @@
 import type { JevAnswer, JevQuestions, JevResponse, JevState } from './types.js';
 
-export const SYSTEM_ONE_URL = 'https://api.typesafe.ai/v1/systemone';
-export const DEFAULT_MODEL = 'jev-latest';
+export const OPENROUTER_DECISIONS_URL = 'https://openrouter.ai/api/alpha/decisions';
+export const DEFAULT_MODEL = '~typesafe/jev-latest';
+
+/**
+ * Provider routing sent with every request and not configurable: only
+ * zero-data-retention endpoints that do not collect prompts. OpenRouter
+ * rejects the request rather than route it anywhere else.
+ */
+export const PRIVACY_PROVIDER = Object.freeze({ zdr: true, data_collection: 'deny' } as const);
 
 export interface JevRequest {
   url: string;
@@ -21,7 +28,7 @@ export function buildJevRequest(
   questions: JevQuestions,
 ): JevRequest {
   return {
-    url: params.baseUrl ?? SYSTEM_ONE_URL,
+    url: params.baseUrl ?? OPENROUTER_DECISIONS_URL,
     method: 'POST',
     headers: {
       authorization: `Bearer ${params.apiKey}`,
@@ -29,6 +36,7 @@ export function buildJevRequest(
     },
     body: JSON.stringify({
       model: params.model ?? DEFAULT_MODEL,
+      provider: PRIVACY_PROVIDER,
       state,
       questions,
     }),

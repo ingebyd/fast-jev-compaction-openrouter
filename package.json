@@ -1,7 +1,7 @@
 {
   "name": "fast-jev-compaction",
   "version": "0.2.0",
-  "description": "Continuous, verbatim context compaction for LLM agents using TypeSafe's Jev model.",
+  "description": "Continuous, verbatim context compaction for LLM agents using TypeSafe's Jev model via OpenRouter (zero data retention).",
   "type": "module",
   "license": "MIT",
   "engines": {

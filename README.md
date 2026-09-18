@@ -56,11 +56,27 @@ built-in compaction summary with the original messages.
 Jev failures, malformed answers, a missing key, or a history that cannot be
 fitted throw; the caller (or the Claude Code hook) decides what to fall back to.
 
+## Privacy: OpenRouter with zero data retention
+
+Jev is called through OpenRouter's Decisions endpoint
+(`https://openrouter.ai/api/alpha/decisions`), not TypeSafe's API directly.
+Every request carries a fixed provider block that cannot be switched off from
+options:
+
+```json
+{ "provider": { "zdr": true, "data_collection": "deny" } }
+```
+
+OpenRouter then routes only to endpoints that neither retain prompts nor
+collect data, and returns an error instead of falling back to anything else.
+A routing error makes compaction throw, and the hook falls back to the
+built-in summary: the transcript never reaches a non-ZDR endpoint.
+
 ## Install and usage
 
 ```sh
 npm install fast-jev-compaction
-export TYPESAFE_API_KEY=...
+export OPENROUTER_API_KEY=...
 ```
 
 ```ts
@@ -93,16 +109,16 @@ method) and call `compact(messages, asker, options)`; `buildJevRequest` and
 The building blocks (`collectToolCalls`, `fitState`, `batchCalls`,
 `decideCall`, `applyDecisions`) are exported too.
 
-`apiKey` defaults to `process.env.TYPESAFE_API_KEY`. Never commit the key or
+`apiKey` defaults to `process.env.OPENROUTER_API_KEY`. Never commit the key or
 put it in a source file.
 
 ## Options
 
 | Option | Default | Description |
 | --- | --- | --- |
-| `apiKey` | `TYPESAFE_API_KEY` | TypeSafe API key (`compactMessages`/`JevClient`) |
-| `model` | `jev-latest` | Jev model name |
-| `baseUrl` | `https://api.typesafe.ai/v1/systemone` | System One endpoint |
+| `apiKey` | `OPENROUTER_API_KEY` | OpenRouter API key (`compactMessages`/`JevClient`) |
+| `model` | `~typesafe/jev-latest` | Jev model slug on OpenRouter |
+| `baseUrl` | `https://openrouter.ai/api/alpha/decisions` | OpenRouter Decisions endpoint |
 | `fetch` | native `fetch` | Injectable fetch implementation for tests |
 | `goal` | last 3 user prompts | Ongoing task description included in the state |
 | `keepThreshold` | `0.5` | Minimum keep probability for a call or result to stay |
@@ -139,7 +155,7 @@ Function hooks are an early-access Claude Code feature (2.1.274+), so the
 opt-in flag must be set wherever Claude Code runs, e.g. in `~/.claude/settings.json`:
 
 ```json
-{ "env": { "CLAUDE_CODE_ENABLE_FUNCTION_HOOKS": "1", "TYPESAFE_API_KEY": "<your key>" } }
+{ "env": { "CLAUDE_CODE_ENABLE_FUNCTION_HOOKS": "1", "OPENROUTER_API_KEY": "<your key>" } }
 ```
 
 Then add this repository as a plugin marketplace and install the plugin,
@@ -151,7 +167,7 @@ claude plugin install fast-jev-compaction@fast-jev-compaction
 ```
 
 The install prompts for the plugin options (API key, thresholds, `truncateHeadChars`,
-…); leave them at their defaults to use `TYPESAFE_API_KEY` from the environment.
+…); leave them at their defaults to use `OPENROUTER_API_KEY` from the environment.
 Restart Claude Code or run `/reload-plugins`. From then on `/compact` (and
 auto-compaction) goes through Jev: the toast reads
 `fast-jev-compaction: kept N/M messages, no summary (…)` when the pruned history
@@ -170,10 +186,10 @@ npm run typecheck        # library + hook
 npm test
 npm run build
 npm run validate:plugin  # claude plugin validate
-TYPESAFE_API_KEY="$(cat ~/.typesafe_key)" npm run demo
+OPENROUTER_API_KEY="$(cat ~/.openrouter_key)" npm run demo
 ```
 
-The unit tests use a fake Jev and never contact TypeSafe. The demo is the live
+The unit tests use a fake Jev and never contact OpenRouter. The demo is the live
 network check.
 
 ## Animated demo (macOS)

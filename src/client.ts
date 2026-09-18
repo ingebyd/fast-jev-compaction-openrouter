@@ -2,11 +2,11 @@ import { buildJevRequest, parseJevResponse } from './request.js';
 import type { JevAsker, JevQuestions, JevResponse, JevState } from './types.js';
 
 export interface JevClientOptions {
-  /** Defaults to `process.env.TYPESAFE_API_KEY`. */
+  /** OpenRouter key. Defaults to `process.env.OPENROUTER_API_KEY`. */
   apiKey?: string;
-  /** Defaults to `jev-latest`. */
+  /** Defaults to `~typesafe/jev-latest`. */
   model?: string;
-  /** Defaults to the System One endpoint. */
+  /** Defaults to OpenRouter's Decisions endpoint. */
   baseUrl?: string;
   /** Defaults to the global `fetch`. */
   fetch?: typeof fetch;
@@ -20,14 +20,14 @@ export class JevClient implements JevAsker {
   private readonly fetcher: typeof fetch;
 
   constructor(options: JevClientOptions = {}) {
-    this.apiKey = options.apiKey ?? process.env.TYPESAFE_API_KEY ?? '';
+    this.apiKey = options.apiKey ?? process.env.OPENROUTER_API_KEY ?? '';
     this.model = options.model;
     this.baseUrl = options.baseUrl;
     this.fetcher = options.fetch ?? fetch;
   }
 
   async ask(state: JevState, questions: JevQuestions): Promise<JevResponse> {
-    if (!this.apiKey) throw new Error('TYPESAFE_API_KEY is not configured');
+    if (!this.apiKey) throw new Error('OPENROUTER_API_KEY is not configured');
     const request = buildJevRequest(
       { apiKey: this.apiKey, model: this.model, baseUrl: this.baseUrl },
       state,
