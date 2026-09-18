@@ -1,15 +1,15 @@
 {
-  "name": "fast-jev-compaction",
+  "name": "fast-jev-compaction-openrouter",
   "owner": {
-    "name": "tamaratran",
-    "url": "https://github.com/tamaratran"
+    "name": "ingebyd",
+    "url": "https://github.com/ingebyd"
   },
   "plugins": [
     {
       "name": "fast-jev-compaction",
       "source": "./",
-      "description": "Verbatim Jev-guided compaction for Claude Code sessions.",
-      "version": "0.3.0",
+      "description": "Verbatim Jev-guided compaction for Claude Code sessions, via OpenRouter with zero data retention.",
+      "version": "0.4.0",
       "license": "MIT"
     }
   ]

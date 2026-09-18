@@ -197,8 +197,8 @@ Then add this repository as a plugin marketplace and install the plugin,
 either from the shell or as slash commands inside a session:
 
 ```sh
-claude plugin marketplace add tamaratran/fast-jev-compaction
-claude plugin install fast-jev-compaction@fast-jev-compaction
+claude plugin marketplace add ingebyd/fast-jev-compaction-openrouter
+claude plugin install fast-jev-compaction@fast-jev-compaction-openrouter
 ```
 
 The install prompts for the plugin options (API key, thresholds, `truncateHeadChars`,

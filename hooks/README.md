@@ -31,8 +31,8 @@ hooks surface before installing or loading it:
 export CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1
 export OPENROUTER_API_KEY="<your OpenRouter key>"
 
-claude plugin marketplace add tamaratran/fast-jev-compaction
-claude plugin install fast-jev-compaction@fast-jev-compaction
+claude plugin marketplace add ingebyd/fast-jev-compaction-openrouter
+claude plugin install fast-jev-compaction@fast-jev-compaction-openrouter
 ```
 
 For local development:
