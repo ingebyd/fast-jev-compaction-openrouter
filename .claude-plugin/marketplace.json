@@ -9,7 +9,7 @@
       "name": "fast-jev-compaction",
       "source": "./",
       "description": "Verbatim Jev-guided compaction for Claude Code sessions, via OpenRouter with zero data retention.",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "license": "MIT"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "name": "fast-jev-compaction",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Verbatim Jev-guided compaction for Claude Code sessions.",
   "license": "MIT",
   "userConfig": {
@@ -57,6 +57,12 @@
       "title": "Jev model",
       "description": "Jev model slug on OpenRouter. Requests are always sent with provider {zdr: true, data_collection: deny}.",
       "default": "~typesafe/jev-latest"
+    },
+    "logDecisions": {
+      "type": "boolean",
+      "title": "Log per-call decisions",
+      "description": "Log the per-call Jev decision list after each compaction, for diagnosis.",
+      "default": false
     }
   }
 }

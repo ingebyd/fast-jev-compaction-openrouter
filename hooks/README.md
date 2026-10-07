@@ -56,6 +56,7 @@ The plugin declares these `userConfig` values in
 | `maxRequestTokens` | `30000` |
 | `truncateHeadChars` | `300` |
 | `model` | `~typesafe/jev-latest` |
+| `logDecisions` | `false` |
 
 The OpenRouter key can be supplied as the sensitive `apiKey` plugin option or
 through `OPENROUTER_API_KEY`. Every request is sent with
@@ -69,8 +70,9 @@ the response is malformed, the key is unavailable, the history cannot be
 fitted into the state budget, or the estimated reduction is below
 `minReductionRatio`, the hook logs a fallback and delegates to Claude Code's
 built-in compaction. The outcome is shown as a toast and logged with the
-reduction, per-reason counts, state size and request count; a per-call
-`decisions:` line with both probabilities is logged for diagnosis. The
+reduction, per-reason counts, state size and request count; with
+`logDecisions: true`, a per-call `decisions:` line with both probabilities is
+also logged for diagnosis (off by default). The
 `turn.complete` hook requests
 compaction when `context.percent` reaches `compactAtPercent`, with an
 in-flight guard.
