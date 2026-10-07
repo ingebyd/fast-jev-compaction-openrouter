@@ -3,6 +3,7 @@ import {
   compactSession,
   decisionLog,
   decisionLogLines,
+  register,
   resolveHookConfig,
   summarize,
   toSessionMessages,
@@ -147,5 +148,48 @@ describe('compactSession', () => {
     await expect(
       compactSession(transcript(), { ...config, apiKey: 'k' }, async () => ({ status: 500, ok: false, text: 'x' })),
     ).rejects.toThrow(/500/);
+  });
+});
+
+describe('turn.complete auto-compact', () => {
+  function harness(compactError: Error) {
+    const handlers: Record<string, (...args: any[]) => Promise<unknown>> = {};
+    register(((name: string, handler: (...args: any[]) => Promise<unknown>) => {
+      handlers[name] = handler;
+    }) as any, {});
+    const logs: string[] = [];
+    let compactCalls = 0;
+    const $ = {
+      session: {
+        usage: async () => ({ context: { percent: 90 } }),
+        compact: async () => {
+          compactCalls += 1;
+          throw compactError;
+        },
+      },
+      ui: { log: (text: string) => logs.push(text) },
+    };
+    const turn = () => handlers['turn.complete']!($, {}, async () => undefined);
+    return { turn, logs, calls: () => compactCalls };
+  }
+
+  it('stops asking after a headless refusal and logs it once', async () => {
+    const h = harness(
+      new Error('fast-jev-compaction: $.session.compact: not available in a headless (-p / SDK) session yet'),
+    );
+    await h.turn();
+    await h.turn();
+    await h.turn();
+    expect(h.calls()).toBe(1);
+    expect(h.logs).toHaveLength(1);
+    expect(h.logs[0]).toMatch(/disabled for this session/);
+  });
+
+  it('keeps retrying other errors but does not repeat the same log line', async () => {
+    const h = harness(new Error('busy'));
+    await h.turn();
+    await h.turn();
+    expect(h.calls()).toBe(2);
+    expect(h.logs).toEqual(['auto-compact skipped (busy)']);
   });
 });

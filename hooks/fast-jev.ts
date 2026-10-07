@@ -262,9 +262,16 @@ function notify(
   $.ui.toast(text, { timeoutMs: 15_000 });
 }
 
-export const register: Register = (on: On, options: PluginOptions) => {
+/** True for the engine's refusal of `$.session.compact` in a headless (-p / SDK) session. */
+export function isCompactUnavailable(message: string): boolean {
+  return /not available in a headless/i.test(message);
+}
+
+export const register: Register =(on: On, options: PluginOptions) => {
   const configured = resolveHookConfig(options);
   let compacting = false;
+  let compactUnavailable = false;
+  let lastAutoCompactError: string | undefined;
 
   on('session.compact', async ($, event, next) => {
     try {
@@ -296,16 +303,23 @@ export const register: Register = (on: On, options: PluginOptions) => {
   });
 
   on('turn.complete', async ($, event: TurnCompleteInput, next) => {
-    if (compacting) return next(event);
+    if (compacting || compactUnavailable) return next(event);
     try {
       const { context } = await $.session.usage();
       if ((context.percent ?? 0) < configured.compactAtPercent) return next(event);
       compacting = true;
       await $.session.compact();
     } catch (error) {
-      $.ui.log(
-        `auto-compact skipped (${error instanceof Error ? error.message : String(error)})`,
-      );
+      const message = error instanceof Error ? error.message : String(error);
+      if (isCompactUnavailable(message)) {
+        // Headless (-p / SDK) sessions cannot compact from a hook; the built-in
+        // threshold still runs session.compact above, so stop asking.
+        compactUnavailable = true;
+        $.ui.log('auto-compact disabled for this session (headless); built-in auto-compact still applies');
+      } else if (message !== lastAutoCompactError) {
+        $.ui.log(`auto-compact skipped (${message})`);
+      }
+      lastAutoCompactError = message;
     } finally {
       compacting = false;
     }
