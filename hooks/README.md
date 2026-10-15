@@ -55,7 +55,7 @@ The plugin declares these `userConfig` values in
 | `maxStateTokens` | `25000` |
 | `maxRequestTokens` | `30000` |
 | `truncateHeadChars` | `300` |
-| `model` | `~typesafe/jev-latest` |
+| `model` | `typesafe/jev-1.14` |
 | `logDecisions` | `false` |
 
 The OpenRouter key can be supplied as the sensitive `apiKey` plugin option or

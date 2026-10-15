@@ -397,7 +397,7 @@ describe('HTTP client', () => {
     expect(request.url).toBe('https://openrouter.ai/api/alpha/decisions');
     expect(request.headers.authorization).toBe('Bearer k');
     expect(JSON.parse(request.body)).toEqual({
-      model: '~typesafe/jev-latest',
+      model: 'typesafe/jev-1.14',
       provider: { zdr: true, data_collection: 'deny' },
       state: { a: 1 },
       questions: { q: { type: 'noul', instructions: 'x' } },

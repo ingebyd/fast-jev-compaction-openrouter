@@ -8,7 +8,7 @@
 | | Original | This fork |
 | --- | --- | --- |
 | Endpoint | `https://api.typesafe.ai/v1/systemone` | `https://openrouter.ai/api/alpha/decisions` |
-| Default model | `jev-latest` | `~typesafe/jev-latest` (OpenRouter alias, currently `typesafe/jev-1.13`) |
+| Default model | `jev-latest` | `typesafe/jev-1.14` (pinned; `~typesafe/jev-latest` still works as an alias) |
 | API key | `TYPESAFE_API_KEY` | `OPENROUTER_API_KEY` (or the plugin's `apiKey` option) |
 | Provider routing | none | `"provider": { "zdr": true, "data_collection": "deny" }` on every request |
 | Request overhead estimate | 20 tokens | 40 tokens |
@@ -28,8 +28,9 @@ model through its Decisions endpoint with the same `state` / `questions` /
   silently weaken it. If no compliant endpoint is available, OpenRouter returns
   an error, compaction throws, and the Claude Code hook falls back to the
   built-in summary: the transcript never reaches a non-ZDR endpoint.
-- **The `~` model alias** follows the newest Jev release without a config
-  change, like `jev-latest` did on TypeSafe.
+- **The default model is pinned** to a specific Jev release, so a new model
+  reaches users only through a plugin release that names it. Set `model` to
+  `~typesafe/jev-latest` to follow the newest release automatically instead.
 - **The overhead estimate** grew by the size of the provider block, so request
   batching still stays under Jev's 32k request limit.
 
@@ -152,7 +153,7 @@ put it in a source file.
 | Option | Default | Description |
 | --- | --- | --- |
 | `apiKey` | `OPENROUTER_API_KEY` | OpenRouter API key (`compactMessages`/`JevClient`) |
-| `model` | `~typesafe/jev-latest` | Jev model slug on OpenRouter |
+| `model` | `typesafe/jev-1.14` | Jev model slug on OpenRouter |
 | `baseUrl` | `https://openrouter.ai/api/alpha/decisions` | OpenRouter Decisions endpoint |
 | `fetch` | native `fetch` | Injectable fetch implementation for tests |
 | `goal` | last 3 user prompts | Ongoing task description included in the state |

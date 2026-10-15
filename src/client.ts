@@ -4,7 +4,7 @@ import type { JevAsker, JevQuestions, JevResponse, JevState } from './types.js';
 export interface JevClientOptions {
   /** OpenRouter key. Defaults to `process.env.OPENROUTER_API_KEY`. */
   apiKey?: string;
-  /** Defaults to `~typesafe/jev-latest`. */
+  /** Defaults to `typesafe/jev-1.14`. */
   model?: string;
   /** Defaults to OpenRouter's Decisions endpoint. */
   baseUrl?: string;

@@ -1,7 +1,7 @@
 import type { JevAnswer, JevQuestions, JevResponse, JevState } from './types.js';
 
 export const OPENROUTER_DECISIONS_URL = 'https://openrouter.ai/api/alpha/decisions';
-export const DEFAULT_MODEL = '~typesafe/jev-latest';
+export const DEFAULT_MODEL = 'typesafe/jev-1.14';
 
 /**
  * Provider routing sent with every request and not configurable: only
