@@ -52,8 +52,8 @@ The plugin declares these `userConfig` values in
 | `preserveRecentMessages` | `6` |
 | `compactAtPercent` | `60` |
 | `minReductionRatio` | `0.25` |
-| `maxStateTokens` | `25000` |
-| `maxRequestTokens` | `30000` |
+| `maxStateTokens` | `120000` |
+| `maxRequestTokens` | `150000` |
 | `truncateHeadChars` | `300` |
 | `model` | `typesafe/jev-1.14` |
 | `logDecisions` | `false` |

@@ -99,9 +99,9 @@ export interface CompactOptions {
   keepThreshold?: number;
   /** Newest messages never touched (the first message is always kept). Default 6. */
   preserveRecentMessages?: number;
-  /** Estimated token ceiling for the state. Default 25000. */
+  /** Estimated token ceiling for the state. Default 120000. */
   maxStateTokens?: number;
-  /** Estimated token ceiling for state plus one batch of questions. Default 30000. */
+  /** Estimated token ceiling for state plus one batch of questions. Default 150000. */
   maxRequestTokens?: number;
   /** Characters of a dropped tool result to retain. Default 300. */
   truncateHeadChars?: number;
